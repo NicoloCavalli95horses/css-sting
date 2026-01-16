@@ -39,8 +39,8 @@ class LoadDirectory {
   }
 
   // Return folder structure
-  getProjectStructure() {
-    const projectStructure = {
+  getFilesToParse() {
+    const filesToParse = {
       js: [],
       vue: [],
     };
@@ -65,16 +65,20 @@ class LoadDirectory {
           if (IGNORE_JS.some(char => basename.endsWith(char))) { continue; }
           // Extract files to be studied
           if (['.js', '.ts'].includes(ext)) {
-            projectStructure.js.push(fullPath);
+            filesToParse.js.push(fullPath);
           } else if (ext === '.vue') {
-            projectStructure.vue.push(fullPath);
+            filesToParse.vue.push(fullPath);
           }
         }
       }
     }
 
     analyzeDir(this.directoryFullPath);
-    return projectStructure;
+    return filesToParse;
+  }
+
+  init() {
+    return this.getFilesToParse() || {};
   }
 }
 
