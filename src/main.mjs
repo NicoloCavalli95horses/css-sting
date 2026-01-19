@@ -1,13 +1,15 @@
 //===================
 // Import
 //===================
-import LoadDirectory from "./fileLoader/LoadDirectory.mjs";
+import LoadDirectory from "./fileDiscovery/FileDiscovery.mjs";
 import FileParser from "./fileParser/FileParser.mjs";
+import SourceLoader from "./sourceLoader/SourceLoader.mjs";
 
 //===================
 // Consts
 //===================
-const TARGET_PROJECT_PATH = '../../vue-css-target';
+const TARGET_PROJECT_PATH = '../tests/importTest';
+// const TARGET_PROJECT_PATH = '../../vue-css-target';
 // const TARGET_PROJECT_PATH = '../../misskey';
 
 
@@ -15,6 +17,7 @@ const TARGET_PROJECT_PATH = '../../vue-css-target';
 //===================
 // Pipeline
 //===================
-const project = new LoadDirectory(TARGET_PROJECT_PATH);
-const parser = new FileParser(project);
+const filePaths = new LoadDirectory(TARGET_PROJECT_PATH);
+const src = new SourceLoader(filePaths);
+const parser = new FileParser(src);
 parser.init()

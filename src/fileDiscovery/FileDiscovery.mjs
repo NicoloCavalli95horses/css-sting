@@ -8,7 +8,7 @@ import { IGNORE_DIRS, IGNORE_JS } from './config.mjs';
 //=================
 // Class
 //=================
-class LoadDirectory {
+class FileDiscovery {
   constructor(directoryFullPath) {
     this.directoryFullPath = directoryFullPath;
   }
@@ -38,12 +38,9 @@ class LoadDirectory {
     }
   }
 
-  // Return folder structure
-  getFilesToParse() {
-    const filesToParse = {
-      js: [],
-      vue: [],
-    };
+  // Return paths of eligible files
+  getFilePaths() {
+    const filePaths = {};
 
     const analyzeDir = (currentPath) => {
       const entries = this.readDirectory(currentPath);
@@ -51,8 +48,10 @@ class LoadDirectory {
       for (const entry of entries) {
         const fullPath = path.join(currentPath, entry);
 
-        // Exclude dependencies or other folders
-        if (IGNORE_DIRS.includes(entry)) { continue; }
+        if (IGNORE_DIRS.includes(entry)) {
+          // Exclude dependencies or other folders
+          continue;
+        }
 
         if (this.isDirectory(fullPath)) {
           // Recursively check internal folder
@@ -61,25 +60,43 @@ class LoadDirectory {
           // File is detected
           const ext = this.getFileExtension(fullPath);
           const basename = path.basename(fullPath);
-          // Exclude config file, tests, etc
-          if (IGNORE_JS.some(char => basename.endsWith(char))) { continue; }
+
+          if (IGNORE_JS.some(char => basename.endsWith(char))) {
+            // Exclude config file, tests, etc
+            continue;
+          }
+
           // Extract files to be studied
-          if (['.js', '.ts'].includes(ext)) {
-            filesToParse.js.push(fullPath);
-          } else if (ext === '.vue') {
-            filesToParse.vue.push(fullPath);
+          switch (ext) {
+            case '.mjs':
+              filePaths.mjs ??= [];
+              filePaths.mjs.push(fullPath);
+              break;
+            case '.js':
+              filePaths.js ??= [];
+              filePaths.js.push(fullPath);
+              break;
+            case '.ts':
+              filePaths.ts ??= [];
+              filePaths.ts.push(fullPath);
+            case '.vue':
+              filePaths.vue ??= [];
+              filePaths.vue.push(fullPath);
+            default:
+              break;
           }
         }
       }
     }
 
     analyzeDir(this.directoryFullPath);
-    return filesToParse;
+    return filePaths;
   }
 
   init() {
-    return this.getFilesToParse() || {};
+    return this.getFilePaths();
   }
 }
 
-export default LoadDirectory;
+
+export default FileDiscovery;

@@ -5,13 +5,13 @@
 //===================
 // Const
 //===================
-export const projectTemplate = {
+export const irTemplate = {
   // Contains each file of the project, with AST and dependency graph
   files: new Map(),
 
-  // Map of dependencies between files. What file is this "symbol" from?
+  // Map of dependencies between files. Where is this file used?
   importGraph: new Map(),
-  // importGraph = Map {
+  // {
   //  '/a.js' → ['/b.js'], // 'a.js' import 'b.js'
   //  '/b.js' → []         // 'b.js' does not import anything
   // }
@@ -21,19 +21,18 @@ export const projectTemplate = {
 // Each file is normalized into an uniform representation
 export const fileTemplate = {
   // Absolute path
-  path: '/abs/path/file.ts',
+  path: '', // '/abs/path/to/file.ts',
 
   // File extension
-  type: 'js' | 'vue',
+  extension: '', // 'js' | 'vue' | 'ts',
 
   // Full AST of the file
-  ast: BabelAST | VueAST,
+  ast: '', // BabelAST | VueAST,
 
   // Meta information
   meta: {
-    sourceType: 'module' | 'script',
-    lang: 'js' | 'ts',
-    isVueSetup: boolean, // <script setup> syntax
+    sourceType: '', // 'module' | 'script',
+    isVueSetup: false, //boolean, // <script setup> syntax
   },
 
   // What does exist in [this] file
